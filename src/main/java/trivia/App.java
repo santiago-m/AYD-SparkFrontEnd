@@ -138,7 +138,7 @@ public class App
 
           System.out.println(pregunta.getString("creador"));
           System.out.println(usuario1.getString("username"));
-          System.out.println(usuario1.getUser);
+          System.out.println(usuario1.getUsername());
           System.out.println(pregunta.getString("creador").equals(usuario1.getUsername()));
 
         } while (pregunta.checked() || (pregunta.getString("creador").equals(usuario1.getString("username"))));
