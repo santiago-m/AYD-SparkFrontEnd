@@ -1,0 +1,27 @@
+<link rel="stylesheet" href="css/style.css">
+
+<center>
+    <h2>Menu Juego</h2><br>
+    <br>
+    <div id="mydiv">
+
+        {{cantAnswer}}
+        <form action="/play" method="post">
+            <input type="submit" value="Jugar" 
+                name="play_btn" id="play_btn" />
+        </form>
+        <br>
+
+        <form action="/profile" method="get">
+            <input type="submit" value="Ver Perfil" 
+                name="profile_btn" id="profile_btn" />
+        </form>
+        <br>
+        <br>
+
+        <form action="/logout" method="post">
+            <input type="submit" value="Cerrar Sesion" 
+                name="logout_btn" id="logout_btn" />
+        </form>
+    </div>
+</center>

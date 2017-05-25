@@ -1,0 +1,26 @@
+<link rel="stylesheet" href="css/style.css">
+
+<center>
+	<h2>Pregunta</h2>
+	<br>
+	<br>
+
+	<div id="mydiv">
+
+		<p> 
+			<STRONG> {{pregunta}} </STRONG> 
+		</p>
+		<br>
+
+		<form action="/play" method="post">
+  			<p> <input type="radio" name="question" value="option1"> {{opcion 1}}  </p>
+			<p> <input type="radio" name="question" value="option1"> {{opcion 2}}  </p>
+			<p> <input type="radio" name="question" value="option1"> {{opcion 3}}  </p>
+			<p> <input type="radio" name="question" value="option1"> {{opcion 4}}  </p>
+			<br>
+			<input type="submit" value="Siguiente Pregunta"
+        		name="next_btn" id="next_btn" />
+		</form>
+	</div>
+
+</center>

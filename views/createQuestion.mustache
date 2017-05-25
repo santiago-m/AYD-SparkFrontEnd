@@ -1,0 +1,24 @@
+<link rel="stylesheet" href="css/style.css">
+
+<center>
+	<h2>Crear Pregunta</h2>
+	<br>
+	<br>
+
+	<div id="mydiv">
+		{{estadoPregunta}}
+		<form action="/submitQuestion" method="POST">
+			<strong>Pregunta: <strong>	<input class="form-control" id="txt_question" name="txt_question" placeholder="Pregunta" type="text" value="" /><br>
+	
+			<strong>  Respuesta Correcta: <strong> <input class="form-control" id="txt_correct" name="txt_correct" placeholder="Respuesta Correcta" type="text" value="" /><br>
+	
+			<strong>  Opcion incorrecta: <strong> <input class="form-control" id="txt_incorrect1" name="txt_incorrect1" placeholder="Respuesta Incorrecta" type="text" value="" /><br>
+	
+			<input type="checkbox" name="wrong1" value="wrong1"> <strong>Opcion incorrecta: <strong> <input class="form-control" id="txt_incorrect2" name="txt_incorrect2" placeholder="Respuesta Incorrecta" type="text" value="" /><br>
+	
+			<input type="checkbox" name="wrong2" value="wrong2"> <strong>Opcion incorrecta: <strong> <input class="form-control" id="txt_incorrect3" name="txt_incorrect1" placeholder="Respuesta Incorrecta" type="text" value="" /><br>
+	
+			<input id="btn_submit" name="btn_submit" type="submit" class="btn btn-default" value="Agregar Pregunta" />
+		</form>
+	</div>
+</center>

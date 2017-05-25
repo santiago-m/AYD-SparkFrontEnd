@@ -1,0 +1,7 @@
+<style type="text/css">
+    #myoutercontainer { position:relative }
+    #myinnercontainer { position:absolute; top:50%; height:10em; margin-top:-5em }
+</style>
+
+div.outerDIV { position:relative }
+div.innerDIV { position:absolute; top:50%; }
