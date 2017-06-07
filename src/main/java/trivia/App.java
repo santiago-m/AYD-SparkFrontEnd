@@ -358,7 +358,7 @@ public class App
             User creador = (User) juego.get(userString);
             pregunta.set("creador", creador.getString("username"));  
 
-            pregunta.set("leido", 0);
+            //pregunta.set("leido", 0);
             pregunta.set("active", 0);
             pregunta.saveIt();
 
