@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE users (
-  id  int(11) auto_increment PRIMARY KEY,
+  id  Integer auto_increment PRIMARY KEY,
   username  VARCHAR(128),
   password  VARCHAR(128),
   puntaje int(11),
