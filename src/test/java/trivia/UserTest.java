@@ -55,8 +55,8 @@ public class UserTest{
 
     @Test
     public void morePoints() {
-        User user1 = new User ("user1", "dsa");
-        User user2 = new User ("user2", "ewq");
+        User user1 = new User ("user1", "prueba");
+        User user2 = new User ("user2", "prueba");
 
         user1.incPoints();
 
@@ -65,8 +65,8 @@ public class UserTest{
 
     @Test
     public void morePoints2() {
-        User user1 = new User ("user1", "dsa");
-        User user2 = new User ("user2", "ewq");
+        User user1 = new User ("user1", "prueba");
+        User user2 = new User ("user2", "prueba");
 
         user1.incPoints();
         user2.setPoints(5);
@@ -75,12 +75,12 @@ public class UserTest{
 
     }
 
-    /*@Test
+    @Test
     public void hasPassword () {
-        User user1 = new User ("zxc", "");
+        User user1 = new User ("user", "");
 
         assertEquals(user1.getPassword() == "", true);
-    }*/
+    }
 
 
 

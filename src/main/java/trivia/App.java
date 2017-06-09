@@ -7,6 +7,7 @@ import trivia.Game;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.lang.String;
 
 import static spark.Spark.*;
 
@@ -306,6 +307,13 @@ public class App
           openDB();
           User usuario = new User(request.queryParams("txt_username"), request.queryParams("txt_password"));     
           closeDB();
+
+          if ((usuario.getPassword().length()) == 0) {
+            mensajes.put ("estadoRegistro", "Debe introducir una password para continuar.-");
+            response.redirect("/register");
+            return null;
+
+          }
 
           if (registrar(usuario)) {
             mensajes.put("estadoRegistro", "");
