@@ -60,16 +60,16 @@ public class App
         //Funcion anonima utilizada para mostrar el menu principal de la aplicacion.
       	get("/", (req, res) -> {
         	String username = req.session().attribute(SESSION_NAME);
+        	String category = req.session().attribute("category");
 
-        	if (username != null) {
-          		if (req.session().attribute("category").equals("user")) {
+        	if ((username != null) && (category != null)) {
+          		if (category.equals("user")) {
             		res.redirect("/gameMenu");
             		return null;
           		}
           		else {
-            	
-            	res.redirect("/adminMenu");
-            	return null;
+            		res.redirect("/adminMenu");
+            		return null;
           		}
         	}
         	else {
@@ -168,7 +168,7 @@ public class App
 
         //Funcion anonima tipo post que se ejecuta iterativamente hasta que dos jugadores estan conectados. Entonces crea un juego multiplayer
         post("/waitForPlayers", (request, response) -> {
-
+        	
           if (request.session().attribute("user") == "user2") {
             if (game.getPlayer1() == null) {
               Game.initGame(game, (User) juego.get("user2"));
