@@ -1,0 +1,18 @@
+<link rel="stylesheet" href="css/style.css">
+
+<center>
+	<h2>Crear Partida</h2>
+	<br>
+	<br>
+
+	<div id="mydiv">
+		{{estadoHost}}
+		<form action="/host" method="POST">
+			<strong>Nombre del Host: <strong>	<input class="form-control" id="hostName" name="hostName" placeholder="Nombre_Host" type="text" value="" /><br>
+			<strong>cantidad de preguntas de la partida: <strong>	<input class="form-control" id="cantPreguntas" name="cantPreguntas" placeholder="cant_preguntas" type="text" value="" /><br>
+
+
+			<input id="btn_addHost" name="btn_addHost" type="submit" class="btn btn-default" value="Crear Host" />
+		</form>
+	</div>
+</center>
