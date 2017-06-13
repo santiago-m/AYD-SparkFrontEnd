@@ -18,10 +18,12 @@ public class Game extends Model{
       validatePresenceOf("jugador2").message("Please, provide your username");
       validatePresenceOf("ganador").message("It must be a winner");
     }
-
+    private String name;
 	private User player1, player2;
-  private int cantJugadoresConectados;
-  private static boolean activo;
+	private int cantPreguntas;
+ 	private int cantJugadoresConectados;
+ 	private boolean activo;
+ 	private HashMap cantRespondidas = new HashMap();
 
     /**
       * Constructor basico de la clase.-
@@ -29,6 +31,7 @@ public class Game extends Model{
     */
   public Game() {
     super();
+    activo = false;
   }
 
   /**
@@ -37,6 +40,15 @@ public class Game extends Model{
   */
   public boolean isClosed() {
     return !activo;
+  }
+
+  private void activateGame() {
+  	activo = true;
+  }
+
+  private void initializeRespondidas() {
+  	cantRespondidas.put(player1.getUsername(), 0);
+  	cantRespondidas.put(player2.getUsername(), 0);
   }
 
   /**
@@ -114,7 +126,7 @@ public class Game extends Model{
     * @author Maria, Santiago; Rivero, Matias.
     * @param game Juego que se desea inicializar.
     * @param user Usuario que busca jugar Multi-Player.
-  */  
+  */
   public static void initGame(Game game, User user) {
     App.openDB();
     game.set("jugador1", user.getInteger("id"));
@@ -127,7 +139,7 @@ public class Game extends Model{
     game.setPlayer2(null);
     game.setCantUsuarios(1);
     App.closeDB();
-    activo = true;
+    game.activateGame();
   }
 
   /**
@@ -137,9 +149,9 @@ public class Game extends Model{
     * @param user1 Jugador 1 de la partida.
     * @param user2 Jugador 2 de la partida.
   */
-  public static void initGame(Game game, User user1, User user2) {
+  public static void initGame(Game game, int cantPreguntas, User user1, User user2) {
     App.openDB();
-    //game.set("jugador1", user1.getInteger("id"));
+    game.set("jugador1", user1.getInteger("id"));
     game.set("jugador2", user2.getInteger("id"));
     game.set("ganador", -1);
     game.set("estado", "activo");
@@ -148,8 +160,21 @@ public class Game extends Model{
     game.setPlayer1(user1);
     game.setPlayer2(user2);
     game.setCantUsuarios(2);
+    game.initializePlayers();
+    game.setCantPreguntas(cantPreguntas);
+
     App.closeDB();
-    activo = true;
+    game.initializeRespondidas();
+
+    game.activateGame();
+  }
+
+  private void setCantPreguntas(int cantPreguntas) {
+  	this.cantPreguntas = cantPreguntas;
+  }
+
+  public void setName(String name) {
+  	this.name = name;
   }
 
   /**
@@ -174,7 +199,7 @@ public class Game extends Model{
       	int preguntaActual;
       	int cantPreguntas = questions.size();
 
-      	if (!questions.isEmpty()) {
+      	if (!questions.isEmpty() && ( ((int) cantRespondidas.get(player.getUsername()) ) < cantPreguntas) ) {
           preguntaActual = App.randInt(1, cantPreguntas);
           pregunta = questions.get(preguntaActual-1);
         
@@ -204,6 +229,9 @@ public class Game extends Model{
         preguntaRespondida.set("usuario", player.getInteger("id"));
         preguntaRespondida.set("pregunta", pregunta.getInteger("id"));
         preguntaRespondida.saveIt();
+
+        cantRespondidas.put(player.getUsername(), ((int) cantRespondidas.get(player.getUsername()) ) + 1);
+
       }
       App.closeDB();
       return (HashMap) preguntas;
@@ -222,14 +250,17 @@ public class Game extends Model{
       jugador.saveIt();
     App.closeDB();
 
-    if (vecesCorrectas == 5) {
-      if (jugador.equals(player1)) {
-        System.out.println(vecesCorrectas);
-        player2.quitarVida();
-      }
-      else {
-        player1.quitarVida();
-      }
+    if (jugador.equals(player1)) {
+    	if (vecesCorrectas % 3 == 0) {
+    		player1.recoverLife();
+    	}
+    	player2.quitarVida(cantPreguntas);
+	}
+	else {
+		if (vecesCorrectas % 3 == 0) {
+    		player2.recoverLife();
+    	}
+    	player1.quitarVida(cantPreguntas);
     }
   }
 

@@ -44,8 +44,12 @@ public class User extends Model {
 		points = puntaje;
 	}
 
-	public void quitarVida() {
-		life = life*(0.9);
+	public void quitarVida(int cantPreguntas) {
+		life = life*((1/cantPreguntas)*0.8);
+	}
+
+	public void recoverLife() {
+		life = life + ((100-life)*0.3);
 	}
 
 	public void initializeToPlay() {
