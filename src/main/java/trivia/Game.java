@@ -46,6 +46,10 @@ public class Game extends Model{
   	activo = true;
   }
 
+  private void initRespondidaOnePlayer() {
+    cantRespondidas.put(player1.getUsername(), 0);
+  }
+
   private void initializeRespondidas() {
   	cantRespondidas.put(player1.getUsername(), 0);
   	cantRespondidas.put(player2.getUsername(), 0);
@@ -132,13 +136,14 @@ public class Game extends Model{
     game.set("jugador1", user.getInteger("id"));
     game.set("jugador2", -1);
     game.set("ganador", -1);
-    game.set("estado", "en cola");
+    game.set("estado", "activo");
     game.saveIt();
 
     game.setPlayer1(user);
     game.setPlayer2(null);
     game.setCantUsuarios(1);
     App.closeDB();
+    game.initRespondidaOnePlayer();
     game.activateGame();
   }
 
@@ -199,6 +204,7 @@ public class Game extends Model{
       	int preguntaActual;
       	int cantPreguntas = questions.size();
 
+
       	if (!questions.isEmpty() && ( ((int) cantRespondidas.get(player.getUsername()) ) < cantPreguntas) ) {
           preguntaActual = App.randInt(1, cantPreguntas);
           pregunta = questions.get(preguntaActual-1);
@@ -250,17 +256,19 @@ public class Game extends Model{
       jugador.saveIt();
     App.closeDB();
 
-    if (jugador.equals(player1)) {
-    	if (vecesCorrectas % 3 == 0) {
-    		player1.recoverLife();
-    	}
-    	player2.quitarVida(cantPreguntas);
-	}
-	else {
-		if (vecesCorrectas % 3 == 0) {
-    		player2.recoverLife();
-    	}
-    	player1.quitarVida(cantPreguntas);
+    if(cantJugadoresConectados == 2) {
+      if (jugador.equals(player1)) {
+        if (vecesCorrectas % 3 == 0) {
+          player1.recoverLife();
+        }
+        player2.quitarVida(cantPreguntas);
+      }
+      else {
+        if (vecesCorrectas % 3 == 0) {
+          player2.recoverLife();
+        }
+        player1.quitarVida(cantPreguntas);
+      }  
     }
   }
 

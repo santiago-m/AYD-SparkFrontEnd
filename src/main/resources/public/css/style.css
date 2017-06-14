@@ -9,4 +9,57 @@
     margin-left: -15em; /*set to a negative number 1/2 of your width*/
     border: 0px solid #ccc;
     background-color: #FFFFFF;
+    color : white;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0);
+}
+
+#message {
+    color: red;
+    font-weight: bold;
+}
+
+#goBack {
+    margin: auto;
+    position: fixed;
+    right: 0%;
+    border: 0px solid #ccc;
+    background-color: #FFFFFF;
+    background: rgba(255, 255, 255, 0);
+}
+
+button.link {
+	font-family: "Verdana" sans-serif;
+	font-size: 1em;
+	text-align: left;
+	color: blue;
+	background: none;
+	margin: 0;
+	padding: 0;
+	border: none;
+	cursor: pointer;
+}
+
+h2 {
+    color : white;
+}
+
+body {
+    background-color: #FFFFFF;
+    background-image: url("fondo2.jpg");
+}
+
+
+
+
+button.link {
+    font-family: "Verdana" sans-serif;
+    font-size: 1em;
+    text-align: left;
+    color: blue;
+    background: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    cursor: pointer;
 }

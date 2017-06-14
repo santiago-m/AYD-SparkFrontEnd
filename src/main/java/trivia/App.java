@@ -17,7 +17,6 @@ import spark.ModelAndView;
 import spark.template.mustache.MustacheTemplateEngine;
 
 import java.util.Random;
-//import java.util.Scanner;
 
 /**
   * Clase Principal que administra el juego y sus subprocesos.
@@ -27,8 +26,6 @@ import java.util.Random;
 
 public class App
 {
-//    public static Scanner in = new Scanner(System.in);
-
     private static final String SESSION_NAME = "username";
     private static Map juego = new HashMap();
     private static ArrayList<Game> games = new ArrayList<Game>();
@@ -108,6 +105,12 @@ public class App
 
         //Funcion anonima utilizada para mostrar el menu del jugador.
       	get("/gameMenu", (req, res) -> {
+          if (req.session().attribute("gameIndex") != null) {
+            games.remove((int) req.session().attribute("gameIndex"));
+            closeHost((String) req.session().attribute(SESSION_NAME));
+            req.session().removeAttribute("gameIndex");
+          }
+
         	return new ModelAndView(mensajes, "./views/gameMenu.mustache");
 	    }, new MustacheTemplateEngine()
     	);
@@ -137,15 +140,28 @@ public class App
         String templateRoute = "./views/play.mustache";
         int indexOfGame = req.session().attribute("gameIndex");
 
-        openDB();
-        preguntas.put("puntajeUsuario", (( (User) req.session().attribute("user"))).getPoints() );
-        preguntas.put("hp", ((User) req.session().attribute("user")).getHP());
-        closeDB();
+    /*  openDB();
+        if (games.get((int) req.session().attribute("gameIndex")).getCantUsuarios() == 1) {
+          preguntas.put("puntajeUsuario", (( (User) req.session().attribute("user"))).getPoints() );
+          preguntas.put("hp", "");
+        }
+        else {
+          preguntas.put("puntajeUsuario", "");
+          preguntas.put("hp", ((User) req.session().attribute("user")).getHP());
+        }
+        
+        
+      closeDB();
+      */
 
         if (games.get(indexOfGame).getCantUsuarios() == 1) {
+          preguntas.put("puntajeUsuario", (( (User) req.session().attribute("user"))).getPoints() );
+          preguntas.put("hp", "");
           preguntas.put("redireccion", "/play");
         }
         else if (games.get(indexOfGame).getCantUsuarios() == 2) {
+          preguntas.put("puntajeUsuario", "");
+          preguntas.put("hp", ((User) req.session().attribute("user")).getHP());
           preguntas.put("redireccion", "/playTwoPlayers");
         }
         else {
@@ -206,7 +222,7 @@ public class App
         );
 
         get("/hostLAN", (req, res) -> {
-          return new ModelAndView(new HashMap(), "./views/crearHost.mustache");
+          return new ModelAndView(mensajes, "./views/crearHost.mustache");
         }, new MustacheTemplateEngine()
         );
 
@@ -222,9 +238,6 @@ public class App
                   crearFila = crearFila+"var td = document.createElement('td'); var form = document.createElement('form'); form.action = \"/selectHost\"; form.method = \"POST\"; var hidden = document.createElement('input'); hidden.type = \"hidden\"; hidden.name = \"hostName\"; hidden.value = \""+hosts.get("Host "+(i+1))+"\"; var btn = document.createElement('input'); btn.type = \"submit\"; btn.className = \"btn\"; btn.value = \""+hosts.get("Host "+(i+1))+"\"; form.appendChild(hidden); form.appendChild(btn); td.appendChild(form); tr.appendChild(td); ";  
                 }
                 else if (j == 1) {
-                  System.out.println("i = "+i+";  j = "+j);
-                  System.out.println(hosts.get("Host "+(i+1)));
-                  System.out.println( (hostUser.get((String) hosts.get("Host "+(i+1)))) == null?"usuario nulo":((User) (hostUser.get((String) hosts.get("Host "+(i+1))))).getUsername());
                   crearFila = crearFila+"var td = document.createElement('td'); td.appendChild(document.createTextNode('"+((User) hostUser.get((String) hosts.get("Host "+(i+1)))).getUsername()+"')); tr.appendChild(td); tbdy.appendChild(tr); tbl.appendChild(tbdy); body.appendChild(tbl);";
                 }
               }
@@ -232,16 +245,6 @@ public class App
           }
           crearFila = crearFila+" } document.getElementById(\"hosts\").innerHTML = tableCreate();";
           script = script+crearFila;
-
-          for (int i = 0; i < script.length(); i++) {
-            if ((script.charAt(i) == ';') || (script.charAt(i) == '{') ) {
-              System.out.println(script.charAt(i));
-            }
-            else {
-              System.out.print(script.charAt(i));
-            }
-          }
-
           hosts.put("script", script);
 
         	return new ModelAndView(hosts, "./views/listarHosts.mustache");
@@ -250,9 +253,9 @@ public class App
 
         post("/selectHost", (request, response) -> {
             String hostName = request.queryParams("hostName");
-            System.out.println(hostName);
 
             Game newGame = new Game();
+
             Game.initGame(newGame, (int) hosts.get(hostName), (User) hostUser.get(hostName), (User) request.session().attribute("user"));
 
             games.add(newGame);
@@ -266,27 +269,37 @@ public class App
 
         post("/host", (request, response) -> {
           String hostName = request.queryParams("hostName");
-          int cantPreguntas = Integer.parseInt(request.queryParams("cantPreguntas"));
+          int cantPreguntas = 0;
+          try {
+            cantPreguntas = Integer.parseInt(request.queryParams("cantPreguntas"));
+          } catch (NumberFormatException e) {
+            System.out.println("Error en el formato del numero.");
+            mensajes.put("estadoHost", "Debe ingresar una cantidad de preguntas");
+            response.redirect("/hostLAN");
+            return null;
+          }
+          
 
           if (!existeHost(hostName)) {
-          	mensajes.put("estadoHost", "");
 
-            System.out.println("Crendo host");
 
+          openDB();
+          List<Question> questions = Question.where("active = 1 and creador != '"+((User) request.session().attribute("user")).getUsername()+"' and ('"+((User) request.session().attribute("user")).getInteger("id")+"', id) not in (SELECT * from respondidas) ");
+
+          if (questions.isEmpty()) {
+            mensajes.put("estadoHost", "Lo siento, no tiene preguntas disponibles suficientes.");
+            response.redirect("/hostLAN");
+            return null;
+          }
+          closeDB();
+
+          	mensajes.put("estadoHost", "");            
 
             hostUser.put(hostName, (User) request.session().attribute("user"));
             hostUser.put(request.session().attribute(SESSION_NAME), "Host "+hosts.size());
-            System.out.println("cantidad Hosts: "+( (int) hosts.get("cantidadHosts") ));
             hosts.put("Host "+ (((int) hosts.get("cantidadHosts"))+1), hostName);
             hosts.put("cantidadHosts",( (int) hosts.get("cantidadHosts"))+1);
             hosts.put(hostName, cantPreguntas);
-            System.out.println("-----------------------------/////////------------------");
-            System.out.println(hostUser.get(hostName));
-            System.out.println(hosts.get("Host 0"));
-            System.out.println(hosts.get("Host 1"));
-            System.out.println(hosts.get("Host "+ ((int) hosts.get("cantidadHosts"))));
-            System.out.println( (int)hosts.get("cantidadHosts"));
-
 
             response.redirect("/waiting");
           }
@@ -343,9 +356,6 @@ public class App
                 			jugadorRespuesta.put( actual.getString("username"), (Integer) jugadorRespuesta.get(actual.getString("username"))+1);
                 			int correctasSeguidas = (Integer) jugadorRespuesta.get(((User) request.session().attribute("user")).getString("username"));
                 			games.get((int) request.session().attribute("gameIndex")).respondioCorrectamente(actual, correctasSeguidas);
-                			/*if (correctasSeguidas == 3) {
-                  				jugadorRespuesta.put(( (User) request.session().attribute("user")).getString("username"), 0);
-                			}*/
               			}
             		}            	
             	}
@@ -382,9 +392,24 @@ public class App
             return null;
         });
         
+
+        post("/singlePlayerGame", (request, response) -> {
+          Game aux = new Game();
+
+          Game.initGame(aux, request.session().attribute("user"));
+
+          games.add(aux);
+          request.session().attribute("gameIndex", games.size()-1);
+
+          response.redirect("/play");
+          return null;
+          
+        });
+
+
         //Funcion anonima tipo post que administra la obtencion de preguntas que responde el usuario en modo Single Player
         post("/play", (request, response) -> {
-        	User usuarioActual = (User) juego.get(request.session().attribute("user"));
+        	User usuarioActual = request.session().attribute("user");
           
           	if (usuarioActual == null) {
     	 		response.redirect("/login");
@@ -526,6 +551,7 @@ public class App
 
             request.session().attribute("category", (usuario instanceof Admin)?"admin":"user");
 
+            mensajes.put("estadoLogin", "");
             response.redirect("/");
     	      return null;
           }
@@ -688,21 +714,13 @@ public class App
 
     public static void closeHost(String usuarioCreador) {
 
-    	System.out.println(usuarioCreador);
-
-    	String hostNumber = (String) hostUser.get(usuarioCreador);
-    	String hostName = (String) hosts.get(hostNumber);
-    	System.out.println(hosts.get(hostNumber));
-    	hosts.remove(hostNumber);
-    	System.out.println(hostName);
-    	System.out.println(hostNumber);
-    	hosts.put("cantidadHosts", ( (int) hosts.get("cantidadHosts") ) - 1);
-    	hostUser.remove(usuarioCreador);
-    	hostUser.remove(hostName);
-    }
-
-    public static String readString() {
-      Scanner in = new Scanner(System.in);
-      return in.nextLine();
+    	if (hostUser.get(usuarioCreador) != null) {
+        String hostNumber = (String) hostUser.get(usuarioCreador);
+        String hostName = (String) hosts.get(hostNumber);
+        hosts.remove(hostNumber);
+        hosts.put("cantidadHosts", ( (int) hosts.get("cantidadHosts") ) - 1);
+        hostUser.remove(usuarioCreador);
+        hostUser.remove(hostName);  
+      }
     }
 }
