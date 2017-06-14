@@ -1,12 +1,18 @@
 <link rel="stylesheet" href="css/style.css">
 
+	<div id="goBack">
+    <form action="/" method="get">
+        <input type="submit" value="Menu Principal" name="mainMenu_btn" id="mainMenu_btn" />
+    </form>
+</div>
+
 <center>
 	<h2>Crear Partida</h2>
 	<br>
 	<br>
 
 	<div id="mydiv">
-		{{estadoHost}}
+		<p id="message">{{estadoHost}}</p>
 		<form action="/host" method="POST">
 			<strong>Nombre del Host: <strong>	<input class="form-control" id="hostName" name="hostName" placeholder="Nombre_Host" type="text" value="" /><br>
 			<strong>cantidad de preguntas de la partida: <strong>	<input class="form-control" id="cantPreguntas" name="cantPreguntas" placeholder="cant_preguntas" type="text" value="" /><br>

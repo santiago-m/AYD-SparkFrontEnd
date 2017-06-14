@@ -1,13 +1,12 @@
 <link rel="stylesheet" href="css/style.css">
 
-
 <center>
     <h2>Menu Administracion</h2><br>
     <br>
 
     <div id="mydiv">
 
-        {{cantAnswer}}
+        <p id="message">{{cantAnswer}}</p>
         <form action="/createQuestion" method="get">
             <input type="submit" value="Crear Pregunta" 
                 name="create_btn" id="create_btn" />

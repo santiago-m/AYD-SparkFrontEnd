@@ -1,5 +1,11 @@
 <link rel="stylesheet" href="css/style.css">
 
+<div id="goBack">
+    <form action="/" method="get">
+        <input type="submit" value="Menu Principal" name="mainMenu_btn" id="mainMenu_btn" />
+    </form>
+</div>
+
 <center>
 <h2>Iniciar Sesion</h2>
 
@@ -7,7 +13,7 @@
 <br>
 
 <div id="mydiv">
-<p>{{estadoLogin}}</p>
+<p id="message">{{estadoLogin}}</p>
 	<form action="/login" method="POST">
 		<input class="form-control" id="txt_username" name="txt_username" placeholder="Username" type="text" value="" /><br>
 		<input class="form-control" id="txt_password" name="txt_password" placeholder="Password" type="password" value="" /><br>

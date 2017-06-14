@@ -1,12 +1,18 @@
 <link rel="stylesheet" href="css/style.css">
 
+<div id="goBack">
+    <form action="/" method="get">
+        <input type="submit" value="Menu Principal" name="mainMenu_btn" id="mainMenu_btn" />
+    </form>
+</div>
+
 <center>
 	<h2>Crear Pregunta</h2>
 	<br>
 	<br>
 
 	<div id="mydiv">
-		{{estadoPregunta}}
+		<p id="message">{{estadoPregunta}}</p>
 		<form action="/submitQuestion" method="POST">
 			<strong>Pregunta: <strong>	<input class="form-control" id="txt_question" name="txt_question" placeholder="Pregunta" type="text" value="" /><br>
 	
