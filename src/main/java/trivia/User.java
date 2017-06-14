@@ -41,7 +41,9 @@ public class User extends Model {
 	}
 
 	public void setPoints(int puntaje) {
-		points = puntaje;
+		if (puntaje >= 0) {
+			points = puntaje;
+		}
 	}
 
 	public void quitarVida(int cantPreguntas) {

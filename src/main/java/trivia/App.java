@@ -7,9 +7,13 @@ import trivia.Game;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+<<<<<<< HEAD
 import java.util.ArrayList;
 
 import java.util.Scanner;
+=======
+import java.lang.String;
+>>>>>>> 3153585ad7ed61d62b8b12ccdf2681dc826eb0ff
 
 import static spark.Spark.*;
 
@@ -216,6 +220,7 @@ public class App
         }, new MustacheTemplateEngine()
         );
 
+<<<<<<< HEAD
         get("/menuHost", (req, res) -> {
           return new ModelAndView(new HashMap(), "./views/menuMultiplayer.mustache");
         }, new MustacheTemplateEngine()
@@ -241,6 +246,22 @@ public class App
                   crearFila = crearFila+"var td = document.createElement('td'); td.appendChild(document.createTextNode('"+((User) hostUser.get((String) hosts.get("Host "+(i+1)))).getUsername()+"')); tr.appendChild(td); tbdy.appendChild(tr); tbl.appendChild(tbdy); body.appendChild(tbl);";
                 }
               }
+=======
+        //Funcion anonima tipo post que se ejecuta iterativamente hasta que dos jugadores estan conectados. Entonces crea un juego multiplayer
+        post("/waitForPlayers", (request, response) -> {
+        	
+          if (request.session().attribute("user") == "user2") {
+            if (game.getPlayer1() == null) {
+              Game.initGame(game, (User) juego.get("user2"));
+            }
+            else if (!(game.getPlayer1().equals((User) juego.get("user2")))) {
+              Game.initGame(game, game.getPlayer1(), (User) juego.get("user2"));
+            }
+          }
+          else if (request.session().attribute("user") == "user1") {
+            if (game.getPlayer1() == null) {
+              Game.initGame(game, (User) juego.get("user1"));
+>>>>>>> 3153585ad7ed61d62b8b12ccdf2681dc826eb0ff
             }
           }
           crearFila = crearFila+" } document.getElementById(\"hosts\").innerHTML = tableCreate();";
@@ -471,6 +492,13 @@ public class App
           openDB();
           User usuario = new User(request.queryParams("txt_username"), request.queryParams("txt_password"));     
           closeDB();
+
+          if ((usuario.getPassword().length()) == 0) {
+            mensajes.put ("estadoRegistro", "Debe introducir una password para continuar.-");
+            response.redirect("/register");
+            return null;
+
+          }
 
           if (registrar(usuario)) {
             mensajes.put("estadoRegistro", "");
