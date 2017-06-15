@@ -163,7 +163,14 @@ public class App
         get("/createQuestion", (req, res) -> {
           return new ModelAndView(mensajes, "./views/createQuestion.mustache");
         }, new MustacheTemplateEngine()
-        );            
+        );       
+
+        //Funcion anonima que permite a un administrador administrar las preguntas existentes en la base de datos.
+        //ACTUALMENTE NO DISPONIBLE
+        get("/adminQuestions", (req, res) -> {
+          return new ModelAndView(new HashMap(), "./views/commingSoon.mustache");
+        }, new MustacheTemplateEngine()
+        );       
 
         //Funcion anonima que crea un bucle hasta que se conecta un segundo jugador para crear una partida multiplayer.
         get("/waiting", (req, res) -> {

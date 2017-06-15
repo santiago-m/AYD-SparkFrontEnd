@@ -48,18 +48,3 @@ body {
     background-color: #FFFFFF;
     background-image: url("fondo2.jpg");
 }
-
-
-
-
-button.link {
-    font-family: "Verdana" sans-serif;
-    font-size: 1em;
-    text-align: left;
-    color: blue;
-    background: none;
-    margin: 0;
-    padding: 0;
-    border: none;
-    cursor: pointer;
-}
