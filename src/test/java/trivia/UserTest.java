@@ -75,13 +75,4 @@ public class UserTest{
 
     }
 
-    @Test
-    public void hasPassword () {
-        User user1 = new User ("user", "");
-
-        assertEquals(user1.getPassword() == "", true);
-    }
-
-
-
 }
