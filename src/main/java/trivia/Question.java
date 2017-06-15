@@ -2,6 +2,10 @@ package trivia;
 
 import org.javalite.activejdbc.Model;
 
+/**
+  * Clase Question que representa una pregunta en la base de datos.
+  * @author Maria, Santiago Jose; Rivero, Matias.
+*/
 public class Question extends Model {
 	private int cantOpciones = 1;
 

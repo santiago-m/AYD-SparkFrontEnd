@@ -18,7 +18,6 @@ public class Game extends Model{
       validatePresenceOf("jugador2").message("Please, provide your username");
       validatePresenceOf("ganador").message("It must be a winner");
     }
-    private String name;
 	private User player1, player2;
 	private int cantPreguntas;
  	private int cantJugadoresConectados;
@@ -42,13 +41,28 @@ public class Game extends Model{
     return !activo;
   }
 
+/**
+  * Metodo que activa un juego.
+  * @author Maria, Santiago Jose; Rivero, Matias.
+*/
+
   private void activateGame() {
   	activo = true;
   }
 
+/**
+  * Metodo que inicializa los datos del primer jugador del juego (Player1).
+  * @author Maria, Santiago Jose; Rivero, Matias.
+*/
+
   private void initRespondidaOnePlayer() {
     cantRespondidas.put(player1.getUsername(), 0);
   }
+
+/**
+  * Metodo que inicializa los datos del segundo jugador del juego (Player2).
+  * @author Maria, Santiago Jose; Rivero, Matias.
+*/
 
   private void initializeRespondidas() {
   	cantRespondidas.put(player1.getUsername(), 0);
@@ -172,14 +186,6 @@ public class Game extends Model{
     game.initializeRespondidas();
 
     game.activateGame();
-  }
-
-  private void setCantPreguntas(int cantPreguntas) {
-  	this.cantPreguntas = cantPreguntas;
-  }
-
-  public void setName(String name) {
-  	this.name = name;
   }
 
   /**
@@ -306,6 +312,10 @@ public class Game extends Model{
 
   public void setCantUsuarios(int cantidad) {
     cantJugadoresConectados = cantidad;
+  }
+
+  private void setCantPreguntas(int cantPreguntas) {
+    this.cantPreguntas = cantPreguntas;
   }
 
 }

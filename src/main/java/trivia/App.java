@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 
-import java.util.Scanner;
-
 import static spark.Spark.*;
 
 import spark.ModelAndView;
@@ -27,20 +25,13 @@ import java.util.Random;
 public class App
 {
     private static final String SESSION_NAME = "username";
-    private static Map juego = new HashMap();
     private static ArrayList<Game> games = new ArrayList<Game>();
     private static Map hostUser = new HashMap();
     private static Map hosts = new HashMap();
     
     public static void main( String[] args )
     {
-        //Se inicializan los valores del HashMap que servirá para mantener los datos del juego abierto.-
-        juego.put("user1", null);
-        juego.put("user2", null);
-        juego.put("cantIniciadas", 0);
-
-
-        /*
+        /* 
         before((request, response) -> {
           boolean authenticated;
           // ... check if authenticated
@@ -55,9 +46,9 @@ public class App
         });
         */
 
-        //Se selecciona la carpeta en la cual se guardaran los archivos estaticos, como css o json.
+      //Se selecciona la carpeta en la cual se guardaran los archivos estaticos, como css o json.
       staticFileLocation("/public");
-        //se reinicia el servidor con los datos actualizados
+      //se reinicia el servidor con los datos actualizados
       init();
 
         //HashMap con los valores del perfil del usuario de la sesion iniciada.
@@ -71,16 +62,8 @@ public class App
         //HashMap que almacena el ganador y perdedor de una partida.
         Map winnerLoser = new HashMap();
 
-        
+        //Se inicializa el contador de hosts
         hosts.put("cantidadHosts", 0);
-
-
-        get("/prueba", (req, res) -> {
-          hosts.put("cantidadHosts", 20);
-          return new ModelAndView(hosts, "./views/listarHosts.mustache");
-      }, new MustacheTemplateEngine()
-      );
-
 
         //Funcion anonima utilizada para mostrar el menu principal de la aplicacion.
         get("/", (req, res) -> {
@@ -139,20 +122,6 @@ public class App
         get("/play", (req, res) -> {
         String templateRoute = "./views/play.mustache";
         int indexOfGame = req.session().attribute("gameIndex");
-
-    /*  openDB();
-        if (games.get((int) req.session().attribute("gameIndex")).getCantUsuarios() == 1) {
-          preguntas.put("puntajeUsuario", (( (User) req.session().attribute("user"))).getPoints() );
-          preguntas.put("hp", "");
-        }
-        else {
-          preguntas.put("puntajeUsuario", "");
-          preguntas.put("hp", ((User) req.session().attribute("user")).getHP());
-        }
-        
-        
-      closeDB();
-      */
 
         if (games.get(indexOfGame).getCantUsuarios() == 1) {
           preguntas.put("puntajeUsuario", (( (User) req.session().attribute("user"))).getPoints() );
@@ -216,16 +185,20 @@ public class App
         }, new MustacheTemplateEngine()
         );
 
+        //Funcion anonima que muestra el menu multiplayer, permitiendo crear una partida o unirse a una ya creada.
         get("/menuHost", (req, res) -> {
           return new ModelAndView(new HashMap(), "./views/menuMultiplayer.mustache");
         }, new MustacheTemplateEngine()
         );
 
+        //Funcion anonima utilizada para recolectar los datos de la partida que el usuario desea crear.
         get("/hostLAN", (req, res) -> {
           return new ModelAndView(mensajes, "./views/crearHost.mustache");
         }, new MustacheTemplateEngine()
         );
 
+        //Funcion anonima que muestra una tabla con las partidas creadas por otros usuarios, permitiendo al usuario conectarse a alguna.
+        //Crea un script que carga la tabla del tamaño necesario para mostrar todas las partidas creadas.
         get("/listarHosts", (req, res) -> {
           String script = "";
           String crearFila = "";
@@ -251,6 +224,7 @@ public class App
         }, new MustacheTemplateEngine()
         );
 
+        //Funcion anonima tipo POST que inicializa un juego entre el usuario y el creador de la partida que ha elegido.
         post("/selectHost", (request, response) -> {
             String hostName = request.queryParams("hostName");
 
@@ -267,6 +241,8 @@ public class App
             return null;
         });
 
+        //Funcion anonima tipo POST que controla los datos ingresados por el usuario que desea crear una partida multi-jugador.
+        //Si los datos tienen el formato correcto, se procede a la espera de otro jugador que se conecte a la partida.
         post("/host", (request, response) -> {
           String hostName = request.queryParams("hostName");
           int cantPreguntas = 0;
@@ -310,7 +286,6 @@ public class App
           return null;
         });
 
-
         //Funcion anonima tipo post que se ejecuta iterativamente hasta que dos jugadores estan conectados. Entonces crea un juego multiplayer
         post("/waitForPlayers", (request, response) -> {
       int actualMax = games.size()-1;
@@ -333,6 +308,7 @@ public class App
 
 
         //Funcion anonima tipo post que administra la obtencion de una pregunta que sera respondida por el usuario que corresponda en modo multiplayer.
+        //Ademas controla que la respuesta dada por el usuario en la pregunta anterior sea correcta y realiza las acciones necesarias en caso que esto suceda.
         post("/playTwoPlayers", (request, response) -> {
           User usuarioActual = request.session().attribute("user");
             if (usuarioActual == null) {
@@ -364,9 +340,9 @@ public class App
                 preguntaObtenida = games.get(indexOfGame).obtenerPregunta(usuarioActual);
 
                 if ( (preguntaObtenida.get("pregunta").equals("")) || (games.get(indexOfGame).getPlayer1().getHP() == 0) || (games.get(indexOfGame).getPlayer2().getHP() == 0)) {
-          if (preguntaObtenida.get("pregunta").equals("")) {
-            mensajes.put("cantAnswer", "Lo siento, uno de los jugadores no tiene mas preguntas disponibles para responder."); 
-          }                 
+                  if (preguntaObtenida.get("pregunta").equals("")) {
+                    mensajes.put("cantAnswer", "Lo siento, uno de los jugadores no tiene mas preguntas disponibles para responder."); 
+                  }                 
 
                   HashMap aux = games.get(indexOfGame).closeGame();
                   winnerLoser.put("ganador", aux.get("ganador"));
@@ -392,7 +368,7 @@ public class App
             return null;
         });
         
-
+        //Funcion anonima tipo POST que inicializa un juego single player y procede a redirigir al juego.
         post("/singlePlayerGame", (request, response) -> {
           Game aux = new Game();
 
@@ -703,6 +679,11 @@ public class App
       }
     }
 
+    /**
+      * Metodo estatico booleano que retorna true si el hostname pasado como parametro ya esta siendo usado por otro usuario.
+      * @author Maria, Santiago; Rivero, Matias.
+      * @param hostName nombre de la partida que se desea crear, la cual es controlada para que no existan dos partidas con el mismo nombre.
+    */
     public static boolean existeHost(String hostName) {
       if (hostUser.get(hostName) != null) {
         return true;
@@ -712,6 +693,11 @@ public class App
       }
     }
 
+    /**
+      * Metodo estatico que cierra la partida que tiene por creador al usuario cuyo nombre es pasado como parametro.
+      * @author Maria, Santiago; Rivero, Matias.
+      * @param usuarioCreador nombre de usuario del creador de la partida que se desea cerrar.
+    */
     public static void closeHost(String usuarioCreador) {
 
       if (hostUser.get(usuarioCreador) != null) {

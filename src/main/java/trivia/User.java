@@ -2,6 +2,10 @@ package trivia;
 
 import org.javalite.activejdbc.Model;
 
+/**
+  * Clase User que representa un usuario en la base de datos.
+  * @author Maria, Santiago Jose; Rivero, Matias.
+*/
 public class User extends Model {
 	private String username;
 	private String password;
